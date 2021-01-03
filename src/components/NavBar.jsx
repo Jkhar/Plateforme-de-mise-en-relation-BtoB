@@ -76,7 +76,7 @@ function NavBar() {
 </button>
 <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
   <div className="navbar-nav">
-    <Link className="nav-link active" to="MonCompte">Mon Compte<span className="sr-only">(current)</span></Link>
+    <Link className="nav-link " to="MonCompte">Mon Compte<span className="sr-only">(current)</span></Link>
      <Link className="nav-link" to="/DeposerAnnonce">Deposer une annonce</Link>
     <Link className="nav-link" to="/Payment">Payment</Link>
     <Link className="nav-link" to="/ContactUs">Contuct us </Link>
@@ -85,6 +85,7 @@ function NavBar() {
    
   </div>
  </div>
+
 
    <div className="ar" >
       <Link className="btn btn-primary ml-2 mr-2" to="/inscription"  role="button">s'inscrire</Link>

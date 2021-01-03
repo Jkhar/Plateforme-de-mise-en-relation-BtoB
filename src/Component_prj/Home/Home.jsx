@@ -2,12 +2,35 @@ import React, { Component } from 'react'
 import './Home.css'
 import  Annonce from '../Annonce/Annonce' 
 import  SearchBar from  "../SearchBar/SearchBar";
+import axios from 'axios'
 
  
  
 
 export default class Home extends Component {
+
+  state = {
+    annonces_bd : []
+}
+
+componentDidMount() {
+    this.getAnnonces_from_backend() ;
+}
+
+getAnnonces_from_backend =()=> {
+    axios.get('http://localhost:3200/ListAnnonces')
+            .then(res => {
+                this.setState({
+                  annonces_bd : res.data.annonces_from_bd 
+                });
+            }).catch(err => console.log(err)) ; 
+}
+
     render() {
+      console.log(this.state.annonces) ;
+ {/* recuperation les note de state */}
+ const {annonces_bd} = this.state ; 
+
         return (
             <div  >
                   <SearchBar/>
@@ -15,10 +38,9 @@ export default class Home extends Component {
    
 <div class="row">
   <div class="leftcolumn">
-
-  <Annonce />
- 
-
+   
+     {annonces_bd.length >0 && annonces_bd.map((annonce_selectionner , index)=> (
+     <Annonce key={index} annonce ={annonce_selectionner} />))}
 
   </div>
   <div class="rightcolumn">

@@ -39,6 +39,9 @@ class AddNote extends Component {
 
             }).catch(err => console.log(err)) ; 
   }
+
+
+  
     render() {
         return (
             

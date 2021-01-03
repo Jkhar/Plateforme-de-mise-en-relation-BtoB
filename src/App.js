@@ -16,17 +16,21 @@ import ContactUs from './Component_prj/ContactUs/ContactUs'
 import Payment from './Component_prj/Payment/Payment'
 import Services from './Component_prj/ServiceDisponibles/Services'
 import '../node_modules/font-awesome/css/font-awesome.min.css'; 
+import history from './history';
+
 
 
 
 function App() {
   return (
     <div className="app" >
-      <BrowserRouter>
+      <BrowserRouter history={history}>
          {/* navbar commun avec toutes les pages */}
        
-        <NavBar/>
-      
+         {window.$statu_user===0 && <NavBar/> }
+         {window.$statu_user===1 && 
+         <div><NavBar/><NavBar/></div>}
+         
 
         <Switch>
         <Route  path="/"  exact component={Home} /> 

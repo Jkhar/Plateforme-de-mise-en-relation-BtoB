@@ -9,6 +9,8 @@ import { Button} from 'react-bootstrap';
 import Select, { components } from 'react-select';
 import 'react-phone-input-2/lib/style.css'
 import ReactPhoneInput from "react-phone-input-2";
+import axios from 'axios' ; 
+
 
 {/* import Countries  from 'react-select-country'; */}
 
@@ -31,6 +33,7 @@ class Inscription extends Component {
       accessible:  [],
       Fonction: null,
       NomSociete: null,
+      AproposService : null ,
       Proprietairedelasociété: null,
       NuméroRegistrecommerce: null,
       SiteWeb: null,
@@ -73,6 +76,7 @@ class Inscription extends Component {
       
     });
   };
+
   handleChange = (event) => {
     const { name, value } = event.target;
    
@@ -83,33 +87,72 @@ class Inscription extends Component {
 
   handleSubmit = (event) => {
     event.preventDefault();
-    const { selectedCountry,phone,email,password,Prenom,Nom,Datedenaissance,Statut,Paysresidence,Paysdorigine,acessible,Fonction,NomSociete,Proprietairedelasociété,NuméroRegistrecommerce,SiteWeb,Domaineactivite,identifiant,TypeCompte} = this.state;
+    const { selectedCountry,phone,email,password,Prenom,Nom,Datedenaissance, AproposService , Statut,Paysresidence,Paysdorigine,acessible,Fonction,NomSociete,Proprietairedelasociété,NuméroRegistrecommerce,SiteWeb,Domaineactivite,identifiant,TypeCompte} = this.state;
    
     if(  `${TypeCompte}`=="Individuel" ) {
 
-       alert(` Traitement individuel Your registration detail: \n 
-    selectedCountry: ${selectedCountry}\n
-    NuméroRegistrecommerce:  ${NuméroRegistrecommerce}\n
-    accessible:   ${acessible}\n
-           Nom: ${Nom}\n
-           Fonction:  ${Fonction}\n
-           TypeCompte :  ${TypeCompte}`);
+          const userIndividuel ={
+            Nom : this.state.Nom , 
+            Prenom : this.state.Prenom , 
+            phone  : this.state.phone , 
+            Paysresidence  : this.state.Paysresidence , 
+            Datedenaissance  : this.state.Datedenaissance , 
+            email  : this.state.email , 
+            password  : this.state.password 
+           }
+    
+           axios.post('http://localhost:3200/userIndividuel/add',userIndividuel)
+           .then(res =>{
+             this.setState({
+               Nom :  "", 
+               Prenom : "" ,
+               phone  : "" , 
+               Paysresidence  :  ""  , 
+               Datedenaissance  :"" , 
+               email  :  "" , 
+               password  :  "" 
+             }) ; 
+        
+             this.props.history.push('/connection') ; 
+                
+           }).catch(err => console.log(err)) ; 
+
     }
     else if ( `${TypeCompte}`=="Entreprise") {
 
-      alert(` Traitement Entreprise Your registration detail: \n 
-   selectedCountry: ${selectedCountry}\n
-   NuméroRegistrecommerce:  ${NuméroRegistrecommerce}\n
-   accessible:   ${acessible}\n
-          Nom: ${Nom}\n
-          Fonction:  ${Fonction}\n
-          TypeCompte :  ${TypeCompte}`);
-   }
+      const userEntre ={
+        Nom : this.state.Nom , 
+        phone  : this.state.phone , 
+        Paysresidence  : this.state.Paysresidence , 
+        Datedenaissance  : this.state.Datedenaissance , 
+        NuméroRegistrecommerce  : this.state.NuméroRegistrecommerce , 
+        AproposService  : this.state.AproposService , 
+        email  : this.state.email , 
+        password  : this.state.password 
+       }
 
-   this.props.history.push('/') ; 
+       axios.post('http://localhost:3200/userEntreprise/add',userEntre)
+       .then(res =>{
+         this.setState({
+           Nom :  "", 
+           phone  : "" , 
+           Paysresidence  :  ""  , 
+           Datedenaissance  :"" , 
+           NuméroRegistrecommerce  : "", 
+           Domaineactivite  :  "", 
+           SiteWeb  :  "" , 
+           email  :  "" , 
+           password  :  "" 
+         }) ; 
+    
+         this.props.history.push('/connection') ; 
+    
+    
+       }).catch(err => console.log(err)) ;  
+    }
 
-
-   
+    
+ 
   };
 
   _next = () => {
@@ -321,20 +364,6 @@ function Step2(props) {
             id="phone"     
           />     
          </div> 
-
-         <div className="email">
-              <label htmlFor="email">Email Proffesionnel </label>
-              <input
-                class="form-control"
-                placeholder="Email"
-                type="email"
-                name="email"
-                noValidate
-                onChange={props.handleChange}
-                value={props.email}
-              />
-              
-            </div>
         
         <div className="Paysresidence" class="form-group">
           <label for="Paysresidence">Pays de residence</label>
@@ -385,20 +414,6 @@ function Step2(props) {
         />
       </div>
 
-      <div className="email">
-              <label htmlFor="email">Email de l'Entreprise</label>
-              <input
-                class="form-control"
-                placeholder="Email"
-                type="email"
-                name="email"
-                noValidate
-                onChange={props.handleChange}
-                value={props.email}
-              />
-              
-            </div>
-
       <div className="phone" class="form-group" >
       <label htmlFor="phone">Telephone 1 </label>
       <ReactPhoneInput
@@ -413,22 +428,7 @@ function Step2(props) {
           id="phone"   
         />
        </div>
-       <div className="phone" class="form-group" >
-      <label htmlFor="phone">Telephone 2</label>
-      <ReactPhoneInput
-          inputExtraProps={{
-            name: "phone",
-            required: true,
-            autoFocus: true
-          }}
-          defaultCountry={"sg"}
-          value={props.phone}
-          onChange={props.handleOnChange} 
-          id="phone"   
-        />
-       </div>
       
-
       <div className="Paysresidence" class="form-group">
         <label for="Paysresidence">Pays ou se trouve Entreprise</label>
         <Select
@@ -474,7 +474,7 @@ function Step3(props) {
           class="form-control"
           placeholder="Domaineactivite"
           type="text"
-          name="Domaine activite"
+          name="Domaineactivite"
           noValidate
           onChange={props.handleChange}
           value={props.Domaineactivite}
@@ -497,7 +497,12 @@ function Step3(props) {
     <div className="propos">
     <label htmlFor="exampleFormControlTextarea1">à propos de Vos Services </label>
     <textarea 
-    class="form-control" required name="body" id="" placeholder="à propos de Vos Services" rows="3"></textarea>
+     class="form-control" required   
+     noValidate       
+     onChange={props.handleChange}
+    name="AproposService" 
+    value={props.AproposService} 
+    id="" placeholder="à propos de Vos Services" rows="3"></textarea>
   </div>
 
     </div>
@@ -553,7 +558,12 @@ function Step3(props) {
       <div className="propos">
     <label htmlFor="exampleFormControlTextarea1">à propos de Vos Services </label>
     <textarea 
-    class="form-control" required name="body" id="" placeholder="à propos de Vos Services" rows="3"></textarea>
+     class="form-control" required   
+     noValidate       
+     onChange={props.handleChange}
+    name="AproposService" 
+    value={props.AproposService} 
+    id="" placeholder="à propos de Vos Services" rows="3"></textarea>
   </div>
 
     </div>
